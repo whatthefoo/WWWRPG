@@ -9,13 +9,11 @@ const crawlUrl = async (url = 'google.com') => {
   const page = await browser.newPage();
   await page.goto(`https://${url}`);
   const title = await page.title();
-  innerText = await page.evaluate(() => {
-    return JSON.parse(document.querySelector('body').innerText);
-  });
+  const aom = await page.accessibility.snapshot();
   await browser.close();
   return {
     title,
-    innerText,
+    aom,
   };
 };
 

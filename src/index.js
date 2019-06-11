@@ -47,6 +47,7 @@ app.get('/crawl/:url(*)', async function(req, res) {
     const result = await crawlUrl(req.params.url);
     res.send(result);
   } catch (error) {
+    console.log(error);
     res.status(500).send(error);
   }
 });

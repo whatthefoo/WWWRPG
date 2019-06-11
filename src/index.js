@@ -34,7 +34,7 @@ const crawlUrl = async (url = 'https://google.com') => {
 app.get('/debug/:url(*)', async function(req, res) {
   console.log('debug');
   try {
-    res.sendFile(path.join(__dirname + '/debug/index.html'));
+    res.sendFile(path.join(__dirname + '/../index.html'));
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

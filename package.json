@@ -4,19 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
+    "start": "node build/index.js",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "build": "npm run clean && babel -d ./build ./src -s",
+    "clean": "rm -rf build && mkdir build",
     "test": "echo \"No test specified\" && exit 0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.2.2",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
     "@babel/node": "^7.2.2",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.2.3",
     "nodemon": "^1.18.9"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.5",
     "dotenv": "^6.2.0",
     "express": "^4.17.1",
     "puppeteer": "^1.17.0"

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>WWWRPG DEBUGGER</title>
+
+  <!-- Load React API -->
+  <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+  <!-- Load React DOM-->
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+  <!-- Load Babel Compiler -->
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  <!-- First time bootstrap user, yo! -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous"
+  />
+
+  <style>
+    .url-form {
+      width: 100%;
+      display: block;
+    }
+  </style>
+
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      class SearchForm extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            value: window.location.pathname.replace('/debug/', ''),
+          };
+
+          this.handleChange = this.handleChange.bind(this);
+          this.handleSubmit = this.handleSubmit.bind(this);
+        }
+
+        handleChange(e) {
+          this.setState({
+            value: e.target.value,
+          });
+        }
+
+        handleSubmit(e) {
+          e.preventDefault();
+          window.location.href = `/debug/${this.state.value}`;
+        }
+
+        render() {
+          const { value } = this.state;
+
+          return (
+            <form onSubmit={this.handleSubmit} className="url-form">
+              <div className="input-group">
+                <div className="input-group-prepend">
+                  <span
+                    className="input-group-text"
+                    id="basic-addon1"
+                  >
+                    URL to crawl
+                  </span>
+                </div>
+                <input
+                  className="form-control"
+                  value={value}
+                  onChange={this.handleChange}
+                  placeholder="https://yoursite.com"
+                />
+              </div>
+            </form>
+          );
+        }
+      }
+
+      class Welcome extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.state = {
+            data: {},
+            path: window.location.pathname.replace('/debug/', ''),
+            hasSearched: false,
+            isLoading: true,
+          };
+        }
+
+        componentDidMount() {
+          this.setState({ isLoading: true });
+
+          if (this.state.path) {
+            fetch(`/crawl/${this.state.path}`)
+              .then(response => response.json())
+              .then(data =>
+                this.setState({
+                  data,
+                  isLoading: false,
+                  hasSearched: true,
+                }),
+              )
+              .catch(error =>
+                this.setState({
+                  error,
+                  isLoading: false,
+                  hasSearched: true,
+                }),
+              );
+          } else {
+            this.setState({ isLoading: false });
+          }
+        }
+
+        render() {
+          const { data, hasSearched, isLoading } = this.state;
+          const { title = '', navigation = [] } = data;
+
+          if (isLoading) {
+            return <p>Loading ...</p>;
+          }
+
+          return (
+            <section>
+              <div class="input-group">
+                <SearchForm />
+              </div>
+              {hasSearched && (
+                <div>
+                  <div className="jumbotron">
+                    <h1 className="display-4">{title}</h1>
+                    <p className="lead">Description here</p>
+                  </div>
+                  <p>Doors:</p>
+                  <ul>
+                    {navigation.map((n, i) => (
+                      <li key={`${i}-${n.url}`}>
+                        🚪 <a href={`/debug/${n.url}`}>{n.text}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+          );
+        }
+      }
+
+      ReactDOM.render(<Welcome />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
